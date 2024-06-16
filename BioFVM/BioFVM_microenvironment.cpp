@@ -559,6 +559,31 @@ void Microenvironment::add_density( std::string name , std::string units, double
 	return; 
 }
 
+void Microenvironment::update_density( std::string name , std::string units )
+{
+	// fix in PhysiCell preview November 2017
+	int density_index = find_density_index( name );
+	if ( density_index == -1 )
+	{ return Microenvironment::add_density( name , units ); }
+	// update units
+	density_units[density_index] = units;
+	return;
+}
+
+void Microenvironment::update_density( std::string name , std::string units, double diffusion_constant, double decay_rate )
+{
+	// fix in PhysiCell preview November 2017
+	int density_index = find_density_index( name );
+	if ( density_index == -1 )
+	{ return Microenvironment::add_density( name , units, diffusion_constant, decay_rate ); }
+	// update units
+	density_units[density_index] = units;
+	// update coefficients
+	diffusion_coefficients[density_index] = diffusion_constant;
+	decay_rates[density_index] = decay_rate;
+	return;
+}
+
 int Microenvironment::find_density_index( std::string name )
 {
 	for( unsigned int i=0; i < density_names.size() ; i++ )
