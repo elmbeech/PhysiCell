@@ -515,6 +515,13 @@ void set_save_biofvm_cell_data_as_custom_matlab( bool newvalue )
 
 /* writing parts of BioFVM to a MultiCellDS file */ 
 
+static bool BioFVM_substrates_initialized_in_dom = false;
+
+void reset_BioFVM_substrates_initialized_in_dom( void )
+{
+	BioFVM_substrates_initialized_in_dom = false;
+}
+
 void add_BioFVM_substrates_to_open_xml_pugi( pugi::xml_document& xml_dom , std::string filename_base, Microenvironment& M )
 {
 	add_MultiCellDS_main_structure_to_open_xml_pugi( xml_dom ); 

@@ -112,6 +112,7 @@ void SeedRandom( unsigned int input )
 
 void SeedRandom( void )
 { 
+	//physicell_random_seed = std::chrono::system_clock::now().time_since_episode().count();
 	physicell_random_seed = std::chrono::system_clock::now().time_since_epoch().count();
 	physicell_PRNG_generator.seed( physicell_random_seed );
 
