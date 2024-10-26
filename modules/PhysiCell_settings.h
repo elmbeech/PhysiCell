@@ -33,7 +33,7 @@
 #                                                                             #
 # BSD 3-Clause License (see https://opensource.org/licenses/BSD-3-Clause)     #
 #                                                                             #
-# Copyright (c) 2015-2018, Paul Macklin and the PhysiCell Project             #
+# Copyright (c) 2015-2024, Paul Macklin and the PhysiCell Project             #
 # All rights reserved.                                                        #
 #                                                                             #
 # Redistribution and use in source and binary forms, with or without          #
@@ -89,7 +89,7 @@ namespace PhysiCell{
  	
 extern pugi::xml_node physicell_config_root; 
 
-bool load_PhysiCell_config_file( std::string filename );
+bool load_PhysiCell_config_file( std::string filename , bool update_variables = false );
 
 class PhysiCell_Settings
 {
@@ -122,6 +122,7 @@ class PhysiCell_Settings
 	bool limits_substrate_plot = false;
 	double min_concentration = -1.0;
 	double max_concentration = -1.0;
+	std::string svg_substrate_colormap = "YlOrRd";
 
 	double intracellular_save_interval = 60; 
 	bool enable_intracellular_saves = false; 
@@ -173,59 +174,63 @@ template <class T>
 class Parameters
 {
  private:
-	std::unordered_map<std::string,int> name_to_index_map; 
-	
+	std::unordered_map<std::string,int> name_to_index_map;
+
 	template <class Y>
-	friend std::ostream& operator<<( std::ostream& os , const Parameters<Y>& params ); 
+	friend std::ostream& operator<<( std::ostream& os , const Parameters<Y>& params );
 
- public: 
-	Parameters(); 
+ public:
+	Parameters();
  
-	std::vector< Parameter<T> > parameters; 
-	
-	void add_parameter( std::string my_name ); 
-	void add_parameter( std::string my_name , T my_value ); 
-//	void add_parameter( std::string my_name , T my_value ); 
-	void add_parameter( std::string my_name , T my_value , std::string my_units ); 
-//	void add_parameter( std::string my_name , T my_value , std::string my_units ); 
-	
-	void add_parameter( Parameter<T> param );
-	
-	int find_index( std::string search_name ); 
-	
-	// these access the values 
-	T& operator()( int i );
-	T& operator()( std::string str ); 
+	std::vector< Parameter<T> > parameters;
 
-	// these access the full, raw parameters 
+	void add_parameter( std::string my_name );
+	void add_parameter( std::string my_name , T my_value );
+	void add_parameter( std::string my_name , T my_value , std::string my_units );
+	void add_parameter( Parameter<T> param );
+
+	void update_parameter( std::string my_name , T my_value );
+	void update_parameter( std::string my_name , T my_value , std::string my_units );
+	void update_parameter( Parameter<T> param );
+
+	int find_index( std::string search_name );
+
+	// these access the values
+	T& operator()( int i );
+	T& operator()( std::string str );
+
+	// these access the full, raw parameters
 	Parameter<T>& operator[]( int i );
-	Parameter<T>& operator[]( std::string str ); 
-	
-	int size( void ) const; 
+	Parameter<T>& operator[]( std::string str );
+
+	int size( void ) const;
+
+	void assert_parameter_not_exists(std::string search_name);
+	int assert_parameter_exists(std::string search_name);
 };
 
 class User_Parameters
 {
  private:
-	friend std::ostream& operator<<( std::ostream& os , const User_Parameters up ); 
+	friend std::ostream& operator<<( std::ostream& os , const User_Parameters up );
  
  public:
-	Parameters<bool> bools; 
-	Parameters<int> ints; 
-	Parameters<double> doubles; 
-	Parameters<std::string> strings; 
-	
-	void read_from_pugixml( pugi::xml_node parent_node );
+	Parameters<bool> bools;
+	Parameters<int> ints;
+	Parameters<double> doubles;
+	Parameters<std::string> strings;
+
+	void read_from_pugixml( pugi::xml_node parent_node , bool update_parameter = false );
 }; 
 
-extern PhysiCell_Globals PhysiCell_globals; 
+extern PhysiCell_Globals PhysiCell_globals;
 
 extern PhysiCell_Settings PhysiCell_settings; 
 
 extern User_Parameters parameters; 
 
-bool setup_microenvironment_from_XML( pugi::xml_node root_node );
-bool setup_microenvironment_from_XML( void );
+bool setup_microenvironment_from_XML( pugi::xml_node root_node , bool update_density = false );
+bool setup_microenvironment_from_XML( bool update_density = false );
 
 }
 
