@@ -82,7 +82,7 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         update: true
-        install: mingw-w64-x86_64-gcc make mingw-w64-x86_64-imagemagick mingw-w64-x86_64-ffmpeg unzip zip git mingw-w64-x86_64-python-zstandard mingw-w64-x86_64-ca-certificates
+        install: mingw-w64-ucrt-x86_64-gcc make mingw-w64-ucrt-x86_64-imagemagick mingw-w64-ucrt-x86_64-ffmpeg unzip zip git mingw-w64-ucrt-x86_64-python-zstandard mingw-w64-ucrt-x86_64-ca-certificates
 
     - name: Build ${{ matrix.projects.name }} project
       run: |
