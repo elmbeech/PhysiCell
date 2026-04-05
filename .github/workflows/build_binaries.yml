@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@main
     
     - name: Build ${{ matrix.projects.name }}
       run: |
@@ -44,7 +44,7 @@ jobs:
         rm -fr config/PhysiCell_settings-backup.xml
         tar -zcvf ${{ matrix.projects.short_name }}-linux.tar.gz ${{ matrix.projects.binary }} Makefile main.cpp config/ custom_modules/
          
-    - uses: actions/upload-release-asset@v1
+    - uses: actions/upload-release-asset@main
       if: github.event_name == 'release'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -77,9 +77,9 @@ jobs:
         shell: msys2 {0}
         
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@main
     
-    - uses: msys2/setup-msys2@v2
+    - uses: msys2/setup-msys2@main
       with:
         update: true
         install: mingw-w64-x86_64-binutils mingw-w64-x86_64-gcc mingw-w64-x86_64-headers-git mingw-w64-x86_64-gcc-libs mingw-w64-x86_64-libwinpthread-git mingw-w64-x86_64-lapack mingw-w64-x86_64-openblas mingw-w64-x86_64-libxml2 mingw-w64-x86_64-bzip2 mingw-w64-x86_64-python mingw-w64-x86_64-python-zstandard mingw-w64-x86_64-python-cffi make bison flex mingw-w64-x86_64-ca-certificates
@@ -101,7 +101,7 @@ jobs:
         rm -fr config/PhysiCell_settings-backup.xml
         tar -zcvf ${{ matrix.projects.short_name }}-win.tar.gz ${{ matrix.projects.binary }}.exe *.dll Makefile main.cpp config/ custom_modules/
         
-    - uses: actions/upload-release-asset@v1
+    - uses: actions/upload-release-asset@main
       if: github.event_name == 'release'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -130,7 +130,7 @@ jobs:
     runs-on: macos-15-intel
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@main
 
     - name: Install dependencies
       run : |
@@ -150,7 +150,7 @@ jobs:
         cp ${{ matrix.projects.binary }} ${{ matrix.projects.short_name }}_macos_intel
 
     - name: Caching produced project binary 
-      uses: actions/cache@v4
+      uses: actions/cache@main
       with:
         path: |
           ${{ github.workspace }}/${{ matrix.projects.short_name }}_macos_intel
@@ -180,7 +180,7 @@ jobs:
     runs-on: macos-14
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@main
 
     - name: Install dependencies
       run : |
@@ -200,7 +200,7 @@ jobs:
         cp ${{ matrix.projects.binary }} ${{ matrix.projects.short_name }}_macos_arm
    
     - name: Caching produced project binary 
-      uses: actions/cache@v4
+      uses: actions/cache@main
       with:
         path: |
           ${{ github.workspace }}/${{ matrix.projects.short_name }}_macos_arm
@@ -231,17 +231,17 @@ jobs:
     needs: [macos_step0a, macos_step0b]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@main
 
     - name: Caching produced project binary 
-      uses: actions/cache@v4
+      uses: actions/cache@main
       with:
         path: |
           ${{ github.workspace }}/${{ matrix.projects.short_name }}_macos_arm
         key: ${{ runner.os }}-macos-arm-${{ github.run_id }}
     
     - name: Caching produced project binary 
-      uses: actions/cache@v4
+      uses: actions/cache@main
       with:
         path: |
           ${{ github.workspace }}/${{ matrix.projects.short_name }}_macos_intel
@@ -262,7 +262,7 @@ jobs:
         rm -fr config/PhysiCell_settings-backup.xml
         tar -zcvf ${{ matrix.projects.short_name }}-macos.tar.gz ${{ matrix.projects.binary }} Makefile main.cpp config/ custom_modules/
         
-    - uses: actions/upload-release-asset@v1
+    - uses: actions/upload-release-asset@main
       if: github.event_name == 'release'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
