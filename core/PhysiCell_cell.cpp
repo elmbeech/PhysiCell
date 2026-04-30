@@ -1401,9 +1401,39 @@ void Cell::ingest_cell( Cell* pCell_to_eat )
 		// absorb fluid volume (all into the cytoplasm) 
 		phenotype.volume.cytoplasmic_fluid += pCell_to_eat->phenotype.volume.fluid; 
 		pCell_to_eat->phenotype.volume.cytoplasmic_fluid = 0.0; 
-		
-		// absorb nuclear and cyto solid volume (into the cytoplasm) 
-		phenotype.volume.cytoplasmic_solid += pCell_to_eat->phenotype.volume.cytoplasmic_solid; 
+
+        // bue 20250917: if exist, update engulfed custom_variable with solid volume fraction.
+        int varindex_apoptotic = custom_data.find_variable_index("engulfed_apoptotic");  // PS
+        int varindex_necrotic = custom_data.find_variable_index("engulfed_necrotic");  // DAMPs
+        int varindex_generic = custom_data.find_variable_index("engulfed");
+
+        if ((get_single_signal(pCell_to_eat, "apoptotic") > 0.1)  && (varindex_apoptotic > -1)) {
+            //std::cout << "ENGULFED APOPTOTIC ingest_cell before: "  << this->custom_data["engulfed_apoptotic"] << std::endl;
+            Cell_Definition& cell_default = get_cell_definition(0); //  id 0 is cell_default
+            this->custom_data["engulfed_apoptotic"] += pCell_to_eat->phenotype.volume.cytoplasmic_solid / cell_defaults.phenotype.volume.solid;
+            this->custom_data["engulfed_apoptotic"] += pCell_to_eat->phenotype.volume.nuclear_solid / cell_defaults.phenotype.volume.solid;
+            //std::cout << "ENGULFED APOPTOTIC ingest_cell after: "  << this->custom_data["engulfed_apoptotic"] << std::endl;
+        }
+        else if ((get_single_signal(pCell_to_eat, "necrotic") > 0.1) && (varindex_necrotic > -1)) {
+            //std::cout << "ENGULFED NECROTIC ingest_cell before: "  << this->custom_data["engulfed_necrotic"] << std::endl;
+            Cell_Definition& cell_default = get_cell_definition(0); //  id 0 is cell_default
+            this->custom_data["engulfed_necrotic"] += pCell_to_eat->phenotype.volume.cytoplasmic_solid / cell_defaults.phenotype.volume.solid;
+            this->custom_data["engulfed_necrotic"] += pCell_to_eat->phenotype.volume.nuclear_solid / cell_defaults.phenotype.volume.solid;
+            //std::cout << "ENGULFED NECROTIC ingest_cell after: "  << this->custom_data["engulfed_necrotic"] << std::endl;
+        }
+        else if (varindex_generic) {
+            //std::cout << "ENGULFED GENERIC ingest_cell before: "  << this->custom_data["engulfed_necrotic"] << std::endl;
+            Cell_Definition& cell_default = get_cell_definition(0); //  id 0 is cell_default
+            this->custom_data["engulfed"] += pCell_to_eat->phenotype.volume.cytoplasmic_solid / cell_defaults.phenotype.volume.solid;
+            this->custom_data["engulfed"] += pCell_to_eat->phenotype.volume.nuclear_solid / cell_defaults.phenotype.volume.solid;
+            //std::cout << "ENGULFED GENERIC ingest_cell after: "  << this->custom_data["engulfed_necrotic"] << std::endl;
+        }
+        else {
+            std::cout << "WARNING : no engulfed* custom variable detected to add ingested cell " << pCell_to_eat->ID << " !" << std::endl;
+        }
+ 
+ 		// absorb nuclear and cyto solid volume (into the cytoplasm)
+ 		phenotype.volume.cytoplasmic_solid += pCell_to_eat->phenotype.volume.cytoplasmic_solid;
 		pCell_to_eat->phenotype.volume.cytoplasmic_solid = 0.0; 
 		
 		phenotype.volume.cytoplasmic_solid += pCell_to_eat->phenotype.volume.nuclear_solid; 
